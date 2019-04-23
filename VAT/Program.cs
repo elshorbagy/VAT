@@ -13,9 +13,11 @@ namespace VAT
         {
             Console.WriteLine("Working...");
             Settings.GetSettings();
-
+            
             var service = BuildDependencies.Build();
-            var data = await service.GetService<IExtractData>().GetHighestVatCountries(3);
+            var extractData = service.GetService<IExtractData>();
+
+            var data = await extractData.GetHighestVatCountries(Settings.CountriesCount);
 
             Console.Clear();
             Console.WriteLine("Hightest VAT Countries");
@@ -25,12 +27,12 @@ namespace VAT
             Console.WriteLine("------------------");
             Console.WriteLine("Lowest VAT Countries");
 
-            data = await service.GetService<IExtractData>().GetLowestVatCountries(3);
+            data = await extractData.GetLowestVatCountries(Settings.CountriesCount);
 
             PrintData(data);
         }
 
-        static void PrintData(List<VatData> vatDataList)
+        private static void PrintData(List<VatData> vatDataList)
         {
             foreach (var vatData in vatDataList)
             {
