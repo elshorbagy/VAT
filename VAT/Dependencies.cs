@@ -4,13 +4,13 @@ using VAT.WebApi;
 
 namespace VAT
 {
-    public static class BuildDependencies
+    public static class Dependencies
     {
         public static ServiceProvider Build()
         {
             var services = new ServiceCollection()
                 .AddTransient<IRestful, Restful>()
-                .AddTransient<IExtractData, ExtractData>()
+                .AddTransient<IDataExtract, DataExtract>()
                 .BuildServiceProvider();
 
             return services;

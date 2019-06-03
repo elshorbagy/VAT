@@ -7,15 +7,15 @@ using VAT.Service;
 
 namespace VAT
 {
-    class Program
+    internal class Program
     {
-        static async Task Main()
+        private static async Task Main()
         {
             Console.WriteLine("Working...");
             Settings.GetSettings();
             
-            var service = BuildDependencies.Build();
-            var extractData = service.GetService<IExtractData>();
+            var service = Dependencies.Build();
+            var extractData = service.GetService<IDataExtract>();
 
             var data = await extractData.GetHighestVatCountries(Settings.CountriesCount);
 
@@ -30,6 +30,8 @@ namespace VAT
             data = await extractData.GetLowestVatCountries(Settings.CountriesCount);
 
             PrintData(data);
+
+            Console.Read();
         }
 
         private static void PrintData(List<VatData> vatDataList)

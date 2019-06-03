@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VAT.Data;
@@ -6,12 +7,11 @@ using VAT.WebApi;
 
 namespace VAT.Service
 {
-    public class ExtractData: IExtractData
+    public class DataExtract: IDataExtract
     {
-        private readonly IRestful _restful;
-        private static RawData _rawData;
+        private readonly IRestful _restful;        
 
-        public ExtractData(IRestful restful)
+        public DataExtract(IRestful restful)
         {
             _restful = restful;
         }
@@ -33,12 +33,13 @@ namespace VAT.Service
 
         private async Task<List<VatData>> GetRate()
         {
-            if (_rawData == null)
-                _rawData = await _restful.GetData();
+            var rawData = new RawData();
 
-            var vatDataList = new List<VatData>(); 
-            
-            foreach (var rawDataRate in _rawData.Rates)
+            rawData = await GetDataFromRestful(rawData);
+
+            var vatDataList = new List<VatData>();
+
+            foreach (var rawDataRate in rawData.Rates)
             {
                 var vatData = new VatData
                 {
@@ -49,10 +50,28 @@ namespace VAT.Service
                 {
                     vatData.VatStandard = ratePeriod.Rates.Standard;
                 }
+
                 vatDataList.Add(vatData);
             }
 
             return vatDataList;
+        }
+
+        private async Task<RawData> GetDataFromRestful(RawData rawData)
+        {
+            if (rawData == null) throw new ArgumentNullException(nameof(rawData));
+
+            if (CacheData.CachedRawData == null)
+            {
+                rawData = await _restful.GetData();
+                CacheData.CachedRawData = rawData;
+            }
+            else
+            {
+                rawData = CacheData.CachedRawData;
+            }
+
+            return rawData;
         }
     }
 }

@@ -7,14 +7,14 @@ using Xunit;
 
 namespace XUnitTestVat
 {
-    public class ExtractDataTest
+    public class DataExtractTest
     {
-        private readonly IExtractData _extractData;
+        private readonly IDataExtract _extractData;
 
-        public ExtractDataTest()
+        public DataExtractTest()
         {
             Settings.GetSettings();            
-            _extractData =new ExtractData(new Restful());
+            _extractData =new DataExtract(new Restful());
         }
 
         [Fact]
